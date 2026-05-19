@@ -1,12 +1,12 @@
 const express = require("express");
+dotenv.config();
+
+const API_KEY = process.env.API_KEY;
 
 const app = express();
 
 async function getVideo(videoId) {
   try {
-    
-    const API_KEY = "AIzaSyAqybz3aeMayBhnQH4GKoBcYyFYLgKC_oo" // API Google Cloud
-
 
     const response = await fetch(
       `https://www.googleapis.com/youtube/v3/videos?part=status,snippet&id=${videoId}&key=${API_KEY}`
