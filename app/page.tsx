@@ -1,5 +1,6 @@
 'use client';
 
+import ButtonCopy from '@/components/handlecopy';
 import { title } from 'process';
 import { useState } from 'react';
 import ReactPlayer from 'react-player';
@@ -178,13 +179,12 @@ export default function Home() {
                   <div className="rounded-3xl bg-slate-900 p-4">
                     <dt className="text-xs uppercase tracking-wider text-slate-500 flex items-center justify-between gap-3">
                       <span>ID Vidéo</span>
-                      <button
-                        type="button"
-                        className="rounded-full border border-slate-700 bg-slate-800 px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-slate-300 transition hover:border-slate-500 hover:text-white"
-                        onClick={() => videoId && handleCopy(videoId, 'ID vidéo')}
+                      <ButtonCopy
+                        className=""
+                        datatocopy={videoId ?? ""}
                       >
                         Copier
-                      </button>
+                      </ButtonCopy>
                     </dt>
                     <dd className="mt-2 break-words text-sm text-slate-100">{videoId}</dd>
                   </div>
