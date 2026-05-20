@@ -37,9 +37,10 @@ const formatDuration = (seconds: number) => {
 };
 
 export default function EmbedChecker() {
+  
   const [input, setInput] = useState('');
   const [videoId, setVideoId] = useState<string | null>(null);
-  const [info, setInfo] = useState<{ title: string; author: string; provider: string } | null>(null);
+  const [info, setInfo] = useState<{ profileId: string; title: string; author: string; provider: string } | null>(null);
   const [status, setStatus] = useState('Prêt à tester une vidéo.');
   const [error, setError] = useState('');
   const [embedResult, setEmbedResult] = useState('');
@@ -47,8 +48,10 @@ export default function EmbedChecker() {
   const [embedUrl, setEmbedUrl] = useState<string | null>(null);
   const [durationText, setDurationText] = useState<string | null>(null);
   const [copyMessage, setCopyMessage] = useState<string>('');
+  const [profleId, SetProfileId] = useState('');
 
   const ThumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+  const url = ''
 
 
   const handleCheck = async () => {
@@ -80,11 +83,15 @@ export default function EmbedChecker() {
       }
 
       const data = await response.json();
+
       setInfo({
         title: data.title ?? 'N/A',
+        url: buildWatchUrl ?? 'N/A',
         author: data.author_name ?? 'N/A',
         provider: data.provider_name ?? 'N/A',
+        profileId: 'N/A' ,
       });
+
       setDurationText('En attente...');
       setEmbedUrl(buildEmbedUrl(id));
       setStatus('Infos récupérées. Test du player YouTube en cours...');
@@ -108,10 +115,14 @@ export default function EmbedChecker() {
 
     const payload: VideoProps = {
       title: info.title,
-      duration: durationText ?? 'N/A',
+      videoId:  videoId,
+      duration: durationText,
       miniature: ThumbnailUrl,
       profile: info.author,
+      profileId  : info.profileId 
     };
+
+      console.log(payload)
 
     try {
       const response = await fetch("/api/publish", {
@@ -119,6 +130,7 @@ export default function EmbedChecker() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
 
       if (!response.ok) {
         const text = await response.text();
