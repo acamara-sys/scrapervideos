@@ -3,13 +3,12 @@ import { useState } from "react";
 
 export interface VideoProps {
   title: string;
-  duration: string;
+  duration: string |null;
+  videoId: string | null;
   miniature: string;
   profile: string;
+  profileId  : string
 }
-
-
-
 
 interface FetchProps {  // Données qui devront être envoyé par le parent ici depuis un input.
     keyword: string; // Exemple : Manchester United, Chelsea

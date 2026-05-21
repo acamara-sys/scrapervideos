@@ -3,6 +3,7 @@ import { VideoProps } from './fetchvideos';
 import ButtonCopy from '@/utils/handlecopy';
 import { useState } from 'react';
 import ReactPlayer from 'react-player';
+import { profiles } from "@/data/profileId";
 
 const parseYouTubeId = (value: string) => {
   const trimmed = value.trim();
@@ -48,10 +49,9 @@ export default function EmbedChecker() {
   const [embedUrl, setEmbedUrl] = useState<string | null>(null);
   const [durationText, setDurationText] = useState<string | null>(null);
   const [copyMessage, setCopyMessage] = useState<string>('');
-  const [profleId, SetProfileId] = useState('');
+  const [selectedProfileId, setSelectedProfileId] = useState<number | null>(null);
 
   const ThumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-  const url = ''
 
 
   const handleCheck = async () => {
@@ -86,7 +86,6 @@ export default function EmbedChecker() {
 
       setInfo({
         title: data.title ?? 'N/A',
-        url: buildWatchUrl ?? 'N/A',
         author: data.author_name ?? 'N/A',
         provider: data.provider_name ?? 'N/A',
         profileId: 'N/A' ,
@@ -106,23 +105,29 @@ export default function EmbedChecker() {
     }
   };
 
-
   const sendToBackend = async () => {
     if (!videoId || !info) {
       setError("Aucune vidéo à envoyer.");
       return;
     }
 
+    if (!selectedProfileId) {
+      setError("Veuillez sélectionner un profil.");
+      return;
+    }
+
+    const selectedProfile = profiles.find(p => p.id === selectedProfileId);
+
     const payload: VideoProps = {
       title: info.title,
-      videoId:  videoId,
+      videoId: videoId,
       duration: durationText,
       miniature: ThumbnailUrl,
-      profile: info.author,
-      profileId  : info.profileId 
+      profile: selectedProfile?.profile ?? info.author,
+      profileId: selectedProfileId.toString(),
     };
 
-      console.log(payload)
+    console.log(payload);
 
     try {
       const response = await fetch("/api/publish", {
@@ -130,7 +135,6 @@ export default function EmbedChecker() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
 
       if (!response.ok) {
         const text = await response.text();
@@ -145,6 +149,7 @@ export default function EmbedChecker() {
       setError(err instanceof Error ? err.message : 'Erreur lors de l\'envoi');
     }
   };
+
 
   return (
     <div>
@@ -244,16 +249,38 @@ export default function EmbedChecker() {
                     </dt>
                     <dd className="mt-2 text-sm text-slate-100">{durationText ?? 'N/A'}</dd>
                   </div>
-                      {!error && (
-                     <div className='absolute right-6 bottom-4'> 
-                      <button 
-                        className='bg-red-500 cursor-pointer rounded-lg py-3 px-4 text-white'
-                        onClick={sendToBackend}
-                        >Envoyer au back</button>
-                      </div>
-                      )}
-                     
                 </dl>
+
+                {!error && (
+                  <div className="mt-9 space-y-4">
+                    <div>
+                      <label htmlFor="profile-select" className="mb-5 mt-5 block text-sm font-medium text-slate-300">
+                        Sélectionner un profil
+                      </label>
+                      <select
+                        id="profile-select"
+                        value={selectedProfileId || ''}
+                        onChange={(e) => setSelectedProfileId(Number(e.target.value))}
+                        className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition duration-200 ease-in-out hover:border-slate-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/30"
+                      >
+                        <option value="">Choisir un profil...</option>
+                        {profiles.map((profile) => (
+                          <option key={profile.id} value={profile.id} className="bg-slate-950 text-white">
+                            {profile.profile}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={sendToBackend}
+                      className="w-full rounded-2xl bg- px-5 py-3 text-sm cursor-pointer   font-semibold text-white shadow-lg shadow-sky-500/20 transition duration-200 ease-in-out hover:bg-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 disabled:opacity-60 disabled:cursor-not-allowed"
+                      disabled={!selectedProfileId}
+                    >
+                      Envoyer au back
+                    </button>
+                  </div>
+                )}
                 {copyMessage ? (
                   <p className="mt-3 text-sm text-emerald-300">{copyMessage}</p>
                 ) : null}
