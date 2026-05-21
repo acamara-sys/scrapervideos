@@ -95,6 +95,7 @@ export default function EmbedChecker() {
       setEmbedUrl(buildEmbedUrl(id));
       setStatus('Infos récupérées. Test du player YouTube en cours...');
       setEmbedResult('Test en attente.');
+      setInput("")
     } catch (fetchError) {
       setError(fetchError instanceof Error ? fetchError.message : 'Erreur inconnue pendant la récupération.');
       setStatus('Impossible de récupérer les informations vidéo.');
