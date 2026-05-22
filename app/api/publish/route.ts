@@ -40,7 +40,6 @@ export async function POST(req: Request) {
             const inputProfile = await page.locator("#acf-field_68fb31a423302 input[type=text]").fill(body.profile)
             const firstChoice = await page.locator('#acf-field_68fb31a423302 .choices-list li').first();
 
-            await firstChoice.waitFor({ state: 'visible' });
 
             await firstChoice.click();
 

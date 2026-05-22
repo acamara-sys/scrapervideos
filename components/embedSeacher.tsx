@@ -9,8 +9,14 @@ export default function EmbedSearcher ()  {
 
     const handleSearch = async () => {
 
-      fetch("http://localhost:3000/api/youtube?keyword=manchester");
+      const response = await fetch("http://localhost:3000/api/youtube?keyword=manchester");
+    
+      const data = await response.json()
 
+      console.log(data)
+
+      setVideos(data)
+      
     }
 
     return (
@@ -37,6 +43,14 @@ export default function EmbedSearcher ()  {
             </button>
             <div className="rounded-3xl bg-slate-900 p-5 px-5 flex flex-col">
                 <div className="bg-slate-500 ">
+
+                    {videos.map((video) => (
+                        <div key={video.id}>
+
+                        </div>
+                    ))}
+                
+ 
 
                 </div>
             </div>
