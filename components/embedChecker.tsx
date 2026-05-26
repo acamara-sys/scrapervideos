@@ -4,6 +4,7 @@ import ButtonCopy from '@/utils/handlecopy';
 import { useState } from 'react';
 import ReactPlayer from 'react-player';
 import { profiles } from "@/data/profileId";
+import Link from 'next/link';
 
 const parseYouTubeId = (value: string) => {
   const trimmed = value.trim();
@@ -154,7 +155,7 @@ export default function EmbedChecker() {
 
   return (
     <div>
-        <div className=" border border-slate-800 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40">
+        <div className="relative border border-slate-800 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40">
           
           <div className="mb-6">
             <p className="text-sm uppercase tracking-[0.32em] text-cyan-400">YouTube Embed Checker</p>
@@ -163,6 +164,12 @@ export default function EmbedChecker() {
               Colle une URL ou un ID YouTube. L’application vérifie si la vidéo est accessible et tente de charger un embed caché.
             </p>
           </div>
+
+            <button 
+            className='absolute right-2 top-2 bg-blue-500 py-1 px-2 cursor-pointer rounded'
+            >
+              <Link href='/scraper'>Go to scraper → </Link>
+             </button>
 
           <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
             <label className="block w-full">

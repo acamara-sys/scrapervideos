@@ -1,50 +1,41 @@
-import { clonePageVaryPathWithNewSearchParams } from "next/dist/client/components/segment-cache/vary-path";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { chromium } from "playwright";
 
-
 export async function POST(req: Request) {
-       
-        
-        const body = await req.json();
-633
-        const context = await chromium.launchPersistentContext(
-            "./chrome-profile",
-            {
-            headless: false
-            }
-        );
+  const body = await req.json();
 
-        const page = await context.newPage();
+  const context = await chromium.launchPersistentContext("./chrome-profile", {
+    headless: false,
+  });
 
-        console.log(body)
+  try {
+    const pages = context.pages();
+    const page = pages.length > 0 ? pages[0] : await context.newPage();
 
-        await page.goto(
-        "https://skoleom.shop/wp-admin/post-new.php?post_type=video"
-        );
+    await page.goto("https://shop.skoleom.com/wp-admin/post-new.php?post_type=video");
 
-            // CSS Selectors
+    await page.locator('id=title').fill(body.title ?? '');
+    await page.locator('id=acf-field_687936b2b0e88').fill(`https://www.youtube.com/watch?v=${body.videoId}`);
+    await page.locator('id=acf-field_687936e0b0e89').fill(body.videoId ?? '');
+    await page.locator('id=acf-field_68f92eb225504').fill(body.duration ?? '');
+    await page.locator('id=acf-field_68793708b0e8a').fill(body.miniature ?? '');
 
-            // Fill title, profile, duration, videoId with body.info
-            const titre  = await page.locator('id=title').fill(body.title);
-            const url  = await page.locator('id=acf-field_687936b2b0e88')
-            .fill(`https://www.youtube.com/watch?v=${body.videoId}`);
-            const videoId = await page.locator('id=acf-field_687936e0b0e89').fill(body.videoId);
-            const duration = await page.locator("id=acf-field_68f92eb225504").fill(body.duration);
-            const thumble  = await page.locator("id=acf-field_68793708b0e8a").fill(body.miniature);
+    if (body.collection_sesport !== false) {
+      await page.locator('id=in-popular-collection-1443').click();
+    }
+    if (body.genre_football !== false) {
+      await page.locator('id=in-popular-genre_video-1480').click();
+    }
 
-            // Check Boxs
-            const sesport_box = await page.locator("id=in-popular-collection-1443").click();
-            const football_box = await page.locator("id=in-popular-genre_video-1480").click();
+    if (body.profile) {
+      await page.locator('#acf-field_68fb31a423302 input[type=text]').fill(body.profile);
+      const firstChoice = page.locator('#acf-field_68fb31a423302 .choices-list li').first();
+      await firstChoice.click();
+    }
 
-            const inputProfile = await page.locator("#acf-field_68fb31a423302 input[type=text]").fill(body.profile)
-            const firstChoice = await page.locator('#acf-field_68fb31a423302 .choices-list li').first();
-
-
-            await firstChoice.click();
-
-    return Response.json({
-        success: true
-    });
-
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    await context.close();
+    return NextResponse.json({ error: err?.message || String(err) }, { status: 500 });
+  }
 }
