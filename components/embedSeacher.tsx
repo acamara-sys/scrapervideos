@@ -1,7 +1,74 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { profiles } from '@/data/profileId';
+
+function ProfileSearch({
+  value,
+  onChange,
+}: {
+  value: number | null;
+  onChange: (id: number | null) => void;
+}) {
+  const current = profiles.find(p => p.id === value);
+  const [query, setQuery] = useState(current?.profile ?? '');
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setQuery(current?.profile ?? '');
+  }, [value]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const filtered = query.trim()
+    ? profiles.filter(p => p.profile.toLowerCase().includes(query.toLowerCase()))
+    : profiles;
+
+  const select = (id: number, name: string) => {
+    onChange(id);
+    setQuery(name);
+    setOpen(false);
+  };
+
+  return (
+    <div ref={ref} className="relative flex-1 min-w-[160px]">
+      <input
+        type="text"
+        value={query}
+        placeholder="Chercher un profil..."
+        onFocus={() => setOpen(true)}
+        onChange={e => {
+          setQuery(e.target.value);
+          setOpen(true);
+          if (!e.target.value) onChange(null);
+        }}
+        className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-white outline-none focus:border-cyan-400"
+      />
+      {open && filtered.length > 0 && (
+        <ul className="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-xl">
+          {filtered.slice(0, 30).map(p => (
+            <li
+              key={p.id}
+              onMouseDown={() => select(p.id, p.profile)}
+              className={`cursor-pointer px-3 py-1.5 text-xs transition hover:bg-slate-700 ${
+                p.id === value ? 'text-cyan-400' : 'text-white'
+              }`}
+            >
+              {p.profile}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 type VideoItem = {
   id: string;

@@ -28,9 +28,14 @@ export async function POST(req: Request) {
     }
 
     if (body.profile) {
-      await page.locator('#acf-field_68fb31a423302 input[type=text]').fill(body.profile);
-      const firstChoice = page.locator('#acf-field_68fb31a423302 .choices-list li').first();
-      await firstChoice.click();
+      const input = page.locator('#acf-field_68fb31a423302 input[type=text]');
+      await input.click();
+      await input.pressSequentially(body.profile, { delay: 80 });
+
+      // Attendre que le résultat apparaisse dans la liste de gauche
+      const result = page.locator('#acf-field_68fb31a423302 .choices li').filter({ hasText: body.profile });
+      await result.waitFor({ state: 'visible', timeout: 6000 });
+      await result.first().click();
     }
 
     return NextResponse.json({ success: true });
