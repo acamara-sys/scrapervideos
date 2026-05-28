@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { chromium } from "playwright";
 
+
 export async function POST(req: Request) {
   const body = await req.json();
 
@@ -12,7 +13,7 @@ export async function POST(req: Request) {
     const pages = context.pages();
     const page = pages.length > 0 ? pages[0] : await context.newPage();
 
-    await page.goto("https://shop.skoleom.com/wp-admin/post-new.php?post_type=video");
+    await page.goto(process.env.url!);
 
     await page.locator('id=title').fill(body.title ?? ''); // Title 
     await page.locator('id=acf-field_687936b2b0e88').fill(`https://www.youtube.com/watch?v=${body.videoId}`); // Lien youtube 
