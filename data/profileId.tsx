@@ -23,5 +23,5 @@ export const profiles: ProfileType[] = [
   { id: 75193, profile:  'golden-state-warriors'},
   { id: 72842, profile:  'OM'},
   { id: 221321,profile: "bruges"},
-  { id: 72933, profile: "anderlecht"}
+  { id: 72933, profile: "anderlecht"},
 ];
