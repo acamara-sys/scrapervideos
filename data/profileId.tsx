@@ -23,4 +23,6 @@ export const profiles: ProfileType[] = [
   { id: 72842, profile:  'OM'},
   { id: 221321,profile: "bruges"},
   { id: 72933, profile: "anderlecht"},
+  {id: 76249, profile: "union-saint-gilloise"},
+  
 ];
