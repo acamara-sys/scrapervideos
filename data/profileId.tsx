@@ -7,7 +7,6 @@ export const profiles: ProfileType[] = [
   { id: 72225, profile: 'Afrique du Sud' },
   { id: 72226, profile: 'Algérie' },
   { id: 72242, profile: 'Allemagne' },
-  { id: 72933, profile: 'anderlecht' },
   { id: 72243, profile: 'Angleterre' },
   { id: 72217, profile: 'Arabi Saoudite'},
   { id: 72213, profile: 'Argentine'},
