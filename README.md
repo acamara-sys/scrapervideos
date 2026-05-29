@@ -19,7 +19,7 @@ API_KEY=clef_apiytb
 WordPress=https://shop.skoleom.com/wp-admin/post-new.php?post_type=video
 ```
 
-url="https://shop.skoleom.com/wp-admin/post-new.php?post_type=video" # Production URL 
+url="https://shop.skoleom.com/wp-admin/post-new.php?post_type=video" # Production URL ,
 # L'URL ci-dessous correspond à l'URL utiliser.
 # Si vous changez l'URL wordpress, il faudra changer les selecteurs en conséquence dans l'api route.
 
